@@ -1,0 +1,123 @@
+openapi: 3.0.2
+info:
+  title: comments
+  version: 1.0.0
+paths:
+  /comments:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                comment:
+                  value:
+                    -
+                      id: 1
+                      name: id labore ex et quam laborum
+                      email: Eliseo@gardner.biz
+                      body: midaig
+          description: Got every comment
+      summary: Get every comment
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+            examples:
+              commentPost:
+                value:
+                  name: midagi
+                  email: s.rekand@voco.ee
+                  body: midagi veel
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                Comment created:
+                  value:
+                    id: 1
+                    name: id labore ex et quam laborum
+                    email: Eliseo@gardner.biz
+                    body: damigi
+          description: Comment created
+        '400':
+          description: 'Error in: Request body'
+      summary: Create a new comment
+  '/comments/{id}':
+    put:
+      requestBody:
+        description: Requesting comment data
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            examples:
+              Comment update:
+                value:
+                  name: id labore ex et quam laborum
+                  email: Eliseo@gardner.biz
+                  body: mdiagi
+        required: true
+      parameters:
+        -
+          name: id
+          description: Unique identifier for a `comment`
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                Comment updated:
+                  value:
+                    message: Comment updated successfully
+          description: Comment updated
+        '404':
+          description: 'Error: No comment found with such `id`'
+      summary: Edit a comment
+    delete:
+      parameters:
+        -
+          name: id
+          description: A unique identifier for a `comment`
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                Comment deleted:
+                  value:
+                    message: Comment deleted successfully
+          description: Comment deleted
+        '404':
+          description: No comment with such `id` found
+      summary: Delete a comment

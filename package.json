@@ -1,0 +1,22 @@
+{
+  "name": "comments-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^2.3.3",
+    "socket.io": "^4.5.4",
+    "swagger-ui": "^4.15.5",
+    "swagger-ui-express": "^4.6.0",
+    "ws": "^8.11.0",
+    "yamljs": "^0.3.0"
+  }
+}
