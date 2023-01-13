@@ -2,8 +2,8 @@ const config = {
   db: {
     host: "localhost",
     user: "root",
-    password: "password",
-    database: "comments_data",
+    password: "root",
+    database: "comments",
   },
   listPerPage: 10,
 };
