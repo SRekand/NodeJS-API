@@ -7,6 +7,8 @@ const yamljs = require("yamljs")
 const swaggerSpec = yamljs.load("./swagger.yaml");
 const expressWs = require('express-ws')(app);
 const Comments = require("./services/comments.js");
+const fs = require("fs");
+const readline = require('readline');
 
 app.use( "/docs" , swaggerUI.serve , swaggerUI.setup(swaggerSpec) );
 app.use(cors());
@@ -42,6 +44,41 @@ function Notify(action, object) {
     ));
 }
 
+app.get("/logs", async (req, res, next) => {
+    const lines = [];
+    const lineReader = readline.createInterface({
+        input: fs.createReadStream('log.txt'),
+        crlfDelay: Infinity
+    });
+
+    for await (const line of lineReader) {
+        const fields = line.match(/(\\.|[^,])+/g);
+        lines.push({
+            timeStamp: fields[0],
+            originalUrl: fields[1],
+            method: fields[2],
+        });
+    }
+    return res.send(lines);
+});
+
+function log(req, res, next) {
+    const currentDate = new Date().toISOString();
+    let date_ob = new Date(currentDate);
+
+    let dateDay = date_ob.getDate();
+    let dateMonth = date_ob.getMonth() + 1;
+    let dateYear = date_ob.getFullYear();
+    let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds();
+
+    const timeStamp = dateDay + "-" + dateMonth + "-" + dateYear + " " + time;
+
+    fs.appendFile('log.txt', timeStamp + ',' + req.originalUrl + ',' + req.method + '\r\n', function(err) {
+        if (err) throw err;
+    });
+    next();
+}
+
 /* GET */
 app.get("/comments", async function (req, res, next) {
     try {
@@ -52,7 +89,7 @@ app.get("/comments", async function (req, res, next) {
 });
 
 /* POST */
-app.post("/comments", async function (req, res, next) {
+app.post("/comments", log, async function (req, res, next) {
     try {
         const newComment = await Comments.create(req.body);
         Notify("add", newComment);
@@ -63,7 +100,7 @@ app.post("/comments", async function (req, res, next) {
 });
 
 /* PUT */
-app.put("/comments/:id", async function (req, res, next) {
+app.put("/comments/:id", log, async function (req, res, next) {
     try {
         res.json(await Comments.update(req.params.id, req.body));
         Notify("edit", {
@@ -73,13 +110,13 @@ app.put("/comments/:id", async function (req, res, next) {
             body: req.body.body
         });
     } catch (err) {
-        res.status(404).send();
+        res.status(404).send({message:"Post not found"});
         next(err);
     }
 });
 
 /* DELETE */
-app.delete("/comments/:id", async function (req, res, next) {
+app.delete("/comments/:id", log, async function (req, res, next) {
     try {
         await Comments.remove(req.params.id);
         Notify("delete", {
