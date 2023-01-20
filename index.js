@@ -102,6 +102,9 @@ app.post("/comments", log, async function (req, res, next) {
 /* PUT */
 app.put("/comments/:id", log, async function (req, res, next) {
     try {
+        if (!await Comments.get(req.params.id)) {
+            return res.status(404).send({message: "Comment not found"});
+        }
         res.json(await Comments.update(req.params.id, req.body));
         Notify("edit", {
             id: parseInt(req.params.id),
@@ -110,7 +113,7 @@ app.put("/comments/:id", log, async function (req, res, next) {
             body: req.body.body
         });
     } catch (err) {
-        res.status(404).send({message:"Post not found"});
+        res.status(500).send({error:err});
         next(err);
     }
 });

@@ -12,6 +12,16 @@ async function getAllComments(page = 1) {
     return helper.emptyOrRows(rows);
 }
 
+// Get a comment
+async function get(id) {
+    const [rows] = await database.query(
+        `SELECT *
+         FROM comments
+         where id = ${id} LIMIT 1`
+    );
+    return helper.emptyOrRow(rows);
+}
+
 // Create a comment
 async function create(comment) {
     const result = await database.query(
@@ -60,4 +70,5 @@ module.exports = {
     create,
     update,
     remove,
+    get,
 };
